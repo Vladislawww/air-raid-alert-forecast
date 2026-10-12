@@ -221,3 +221,5 @@ __marimo__/
 
 data/ 
 *.csv
+__pycache__/
+tempCodeRunnerFile* 
