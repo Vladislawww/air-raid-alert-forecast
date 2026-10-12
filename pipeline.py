@@ -4,6 +4,7 @@ import lightgbm as lgb
 
 from main import load_raw, get_region_alerts, build_hourly, H
 from features import build_features
+from sklearn.ensemble import RandomForestClassifier
 
 TRAIN_START = pd.Timestamp("2024-01-01", tz="UTC")
 N_FOLDS = 6
@@ -24,9 +25,9 @@ def load_eligible():
 
 
 def make_model():
-    return lgb.LGBMClassifier(
-        n_estimators=300, learning_rate=0.03, num_leaves=15, min_child_samples=50,
-        subsample=0.8, subsample_freq=1, colsample_bytree=0.8, random_state=42, verbose=-1,
+    return RandomForestClassifier(
+        n_estimators=300, min_samples_leaf=30, max_features="sqrt",
+        n_jobs=-1, random_state=42,
     )
 
 

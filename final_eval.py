@@ -63,5 +63,5 @@ for share in (0.05, 0.10, 0.20):
 # 6. Зберігаємо модель для predict.py
 Path("artifacts").mkdir(exist_ok=True)
 joblib.dump({"model": model, "platt": platt, "feature_cols": feature_cols,
-             "trained_until": str(t_test)}, "artifacts/model.joblib")
+             "trained_until": str(t_test)}, "artifacts/model.joblib", compress=3)
 print("\nЗбережено artifacts/model.joblib")
