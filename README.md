@@ -1,12 +1,12 @@
 # Air Raid Alert Forecast (Kyiv)
 
-A small Python project that estimates the probability that **an air raid alert starts in Kyiv within the next hour**, using only information available at the forecast time.
+A Python project that estimates the probability that an air raid alert starts in Kyiv within the next hour, using only information available at the forecast time.
 
-**Main result:** on the untouched last two months of data, the model ranks risky hours **~1.8x better than random guessing** (PR-AUC 0.192 vs 0.106). It is a *relative risk indicator*, not an exact predictor. See [Limitations](#limitations).
+**Main result:** on the untouched last two months of data, the model ranks risky hours **~1.8x better than random guessing**. It is a *relative risk indicator*, not an exact predictor.
 
 ## Task
 
-At every hour `t` when **no alert is active in Kyiv**, predict `P(a new alert starts in (t, t+1h])`.
+At every hour `t` when no alert is active in Kyiv, predict `P(a new alert starts in (t, t+1h])`.
 
 Why this is hard:
 - Alerts are rare (about 6% of eligible hours), so plain accuracy is meaningless. I use PR-AUC and "lift" (how many times better than random guessing).
@@ -15,7 +15,9 @@ Why this is hard:
 ## Data
 
 [ukrainian-air-raid-sirens-dataset](https://github.com/Vadimkin/ukrainian-air-raid-sirens-dataset) (`official_data_uk.csv`), alerts from 2022-03-15 to 2026-09-07 (the latest version available at the time of work).
-The file is **not** included in the repo (see [Quick start](#quick-start)).
+The file is **not** included in the repo. 
+I also wanted to combine the two files and found another file that contained more recent data, but I thought it wasn't worth doing because I didn't have enough time to update and combine the file with the previous version.
+(https://github.com/JustJimer/ukraine-air-alert-stats/blob/main/archive/alerts_in_ua.csv) (`archive/alerts_in_ua.csv`)
 
 Notes on the data:
 - For Kyiv city: 4141 records = **2267 real alerts**. Before 2026 each alert was recorded twice (exact duplicates), so I deduplicate first.
@@ -23,7 +25,7 @@ Notes on the data:
 
 ## Results
 
-Test = the last 2 months (2026-07-07 to 2026-09-07), opened **once**, after all decisions were made.
+Test = the last 2 months (2026-07-07 to 2026-09-07), opened once, after all decisions were made.
 1346 eligible hours, 143 alert starts, base rate 10.6%.
 
 | Model | PR-AUC | Lift vs random | Brier |
@@ -35,7 +37,7 @@ Test = the last 2 months (2026-07-07 to 2026-09-07), opened **once**, after all 
 
 How to read it:
 - **Lift** = PR-AUC divided by the base rate. 2.33 means the model finds alert starts 2.3x better than chance.
-- The 10% of hours the model rates riskiest contain **26.6%** of all alert starts (random choice would give ~10%); the top 20% contain **38.5%**.
+- The 10% of hours the model rates riskiest contain **26.6%** of all alert starts (random choice would give +-10%); the top 20% contain **38.5%**.
 - In the top 5% riskiest hours, the true alert rate reaches 36.8% (3.5x higher than the base rate).
 
 ## How it works
@@ -86,18 +88,33 @@ To reproduce everything: `python final_eval.py` (retrains and re-evaluates; take
 ## Project structure
 
 ```
-main.py            hourly table and target
-features.py        features from the past
-pipeline.py        shared functions: data loading, model, walk-forward windows
-final_eval.py      final training and one-shot test evaluation
-predict.py         probability for a chosen time
-test_no_leakage.py automatic leakage check
-experiments scripts (see below)
-artifacts/         saved model
-```
-
-Experiment scripts (each one answers one question; they were run during development): `diagnose.py` (data quality), `baseline.py` (simple baselines, training window), `train.py` (first model), `evaluate_folds.py` (6 walk-forward windows, `month` ablation), `calibration.py` and `calibrate.py` (calibration check and Platt vs Isotonic).
+├── artifacts/
+│   └── model.joblib          # Final serialized model bundle (Random Forest + Platt, compress=3)
+├── data/                     # Local data directory (git-ignored)
+│   └── official_data_uk.csv  # Verified alert dataset (2022-03-15 to 2026-09-07)
+│
+│── [ Core Pipeline & Production ]
+├── main.py                   # Data ingestion, target formulation, and hourly time-grid aggregation
+├── features.py               # Feature engineering (regional alerts, spatial lags, cyclical time of day)
+├── pipeline.py               # Architecture definition, walk-forward OOF validation, Platt logit transform
+├── final_eval.py             # Full training, calibrator fitting, out-of-time evaluation, and model export
+├── predict.py                # Command-line interface for risk inference at any specified timestamp
+├── test_no_leakage.py        # Automated regression test verifying strict zero-leakage temporal isolation   
+│
+│── [ Research & Hypothesis Scripts ]
+├── diagnose.py               # Data audit: checking duplicate events, interval overlaps, and missing boundaries   
+├── baseline.py               # Naive heuristic benchmarks (constant baseline, hour-of-day rate) and window selection   
+├── train.py                  # Initial validation prototype: Logistic Regression vs LightGBM and Gain importance   
+├── compare_models.py         # Comparative benchmarking across model families (Linear vs Tree Ensembles vs RF)   
+├── evaluate_folds.py         # 6-fold walk-forward validation and feature ablation testing for calendar month   
+├── calibration.py            # Diagnostic reliability curves and empirical probability analysis   
+├── calibrate.py              # Prototyping Platt Scaling via logistic regression over out-of-fold logits   
+├── build_combined.py         # Source stitching experiment: overlap consistency audit and distribution shift analysis   
+│
+│── [ Configuration & Documentation ]
+├── requirements.txt          # Frozen dependency specifications   
+└── README.md                 # Complete project documentation and benchmark report   
 
 ## AI usage
 
-The project was built in dialogue with Claude; the full chat log is submitted separately.
+The project was built in dialogue with Claude and Gemini; 

@@ -47,7 +47,7 @@ def build_hourly(alerts, data_end, h=H):
     finishes = iv["finish"].values.astype("datetime64[ns]")
 
     t_first = alerts["started_at"].min().floor("h")
-    t_last = data_end.floor("h") - pd.Timedelta(hours=h)  # щоб ціль була повністю спостережена
+    t_last = data_end.floor("h") - pd.Timedelta(hours=h)  
     grid = pd.date_range(t_first, t_last, freq="h", tz="UTC")
     t = grid.values.astype("datetime64[ns]")
 
@@ -66,7 +66,7 @@ def build_hourly(alerts, data_end, h=H):
 
 if __name__ == "__main__":
     df = load_raw()
-    data_end = df["finished_at"].max()  # кінець спостережень у ВСЬОМУ файлі
+    data_end = df["finished_at"].max()  # кінець спостережень 
     alerts = get_region_alerts(df)
     hourly, iv = build_hourly(alerts, data_end)
 

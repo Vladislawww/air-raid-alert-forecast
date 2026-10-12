@@ -11,7 +11,7 @@ from pipeline import (load_eligible, make_model, test_start,
 
 eligible, feature_cols, names = load_eligible()
 lr_cols = [c for c in feature_cols if c not in ("hour", "dow")]
-t_test = test_start(eligible)          # усе після цього - тест, сюди не заходимо
+t_test = test_start(eligible)         
 
 
 def fit_predict(kind, tr, va):

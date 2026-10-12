@@ -17,8 +17,6 @@ sample = rng.choice(len(cands), size=25, replace=False)
 bad = 0
 for i in sample:
     t = cands[i]
-    # "дані, відомі в момент t": прибираємо тривоги, що почались після t,
-    # а кінець тривоги, яка ще йде в t, ховаємо (невідомий)
     d = df[df["started_at"] <= t].copy()
     d.loc[d["finished_at"] > t, "finished_at"] = t + pd.Timedelta(days=365)
     trunc, _ = build_features(d, pd.DataFrame(index=pd.DatetimeIndex([t])), oblasts=others)

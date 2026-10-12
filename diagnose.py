@@ -8,7 +8,7 @@ alerts = get_region_alerts(df)
 
 print("=== Загальне ===")
 print("Записів у файлі для регіону:", len(raw))
-print("Унікальних тривог:", len(alerts))   # очікуємо 2267
+print("Унікальних тривог:", len(alerts))   
 
 print("\n=== Значення source ===")
 print(raw["source"].value_counts())

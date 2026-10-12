@@ -8,7 +8,7 @@ from features import region_intervals, active_at
 
 BASE_DIR = Path(__file__).resolve().parent
 OLD_PATH = BASE_DIR / "data" / "official_data_uk.csv"
-NEW_PATH = BASE_DIR / "data" / "alerts_in_ua.csv"          # підстав справжню назву нового файлу
+NEW_PATH = BASE_DIR / "data" / "alerts_in_ua.csv"          
 OUT_PATH = BASE_DIR / "data" / "combined_alerts.csv.gz"
 
 # Окуповані території: у новому джерелі там постійні тривоги без кінця, це не сигнал

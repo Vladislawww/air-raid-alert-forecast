@@ -92,7 +92,7 @@ for k in range(N_FOLDS, 0, -1):
         })
 
 res = pd.DataFrame(rows)
-res["lift"] = res["PR_AUC"] / res["base"]   # у скільки разів краще за випадкове вгадування
+res["lift"] = res["PR_AUC"] / res["base"]  
 
 order = list(MODELS.keys())
 print("=== Частка позитивних і кількість у кожному вікні ===")

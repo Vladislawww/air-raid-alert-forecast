@@ -18,10 +18,10 @@ data = X_all.join(hourly[["active_now", "target"]])
 eligible = data[~data["active_now"]]
 
 last = eligible.index.max()
-t_test = last - pd.DateOffset(months=2)   # усе, що пізніше, - тест, сюди не заходимо
+t_test = last - pd.DateOffset(months=2)  
 gap = pd.Timedelta(hours=H)
 
-feature_cols = [c for c in X_all.columns if c != "month"]   # рішення: без month
+feature_cols = [c for c in X_all.columns if c != "month"]  
 
 # --- 2. Прогнози на кожному відрізку (модель не бачила цей відрізок) ---
 parts = []

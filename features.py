@@ -43,7 +43,7 @@ def build_features(df, hourly, oblasts=None):
     for w in (1, 3, 6, 24, 72):
         feats[f"kyiv_starts_{w}h"] = starts_in_window(s, t, w)
 
-    j = np.searchsorted(f, t, side="right") - 1      # остання тривога, що ВЖЕ закінчилась (finish <= t)
+    j = np.searchsorted(f, t, side="right") - 1      
     ok = j >= 0
     jj = np.clip(j, 0, None)
     feats["kyiv_hours_since_end"] = np.minimum(np.where(ok, (t - f[jj]) / ONE_H, 720.0), 720.0)
